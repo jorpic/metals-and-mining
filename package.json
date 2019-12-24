@@ -1,0 +1,16 @@
+{
+  "name": "mm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Max Taldykin",
+  "license": "MIT",
+  "dependencies": {
+    "matter": "^0.2.0",
+    "matter-js": "^0.14.2",
+    "poly-decomp": "^0.3.0"
+  }
+}
