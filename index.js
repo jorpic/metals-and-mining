@@ -120,7 +120,6 @@ class Train {
 
 class Hero {
   constructor(x, y) {
-    console.log(heroImg);
     const heroW = 206, heroH = 287, heroScale = 0.2;
     this.body = Bodies.rectangle(
       x, y, heroW*heroScale, heroH*heroScale,
@@ -135,7 +134,10 @@ class Hero {
   }
 
   move(x, y = 0) {
-    Body.applyForce(this.body, this.body.position, {x: 0.002*x, y: 0.005*y});
+    Body.applyForce(
+      this.body,
+      this.body.position,
+      {x: 0.002*x, y: 0.005*y});
   }
 
   tick(e, key) {
@@ -147,6 +149,25 @@ class Hero {
   }
 }
 
+class OreSource {
+  constructor(x, y, {freq, size}) {
+    Object.assign(this, {x, y, freq, size});
+    this.lastCreation = 0;
+  }
+
+  tick(e, key) {
+    if(e.timestamp - this.lastCreation > this.freq) {
+      this.lastCreation = e.timestamp;
+      const poly = (sz, color) => Bodies.polygon(
+        this.x, this.y, 7, sz, {render: {fillStyle: color}});
+      const obj = Math.random() > 0.8
+        ? poly(this.size*2, "#ffb612")
+        : poly(this.size*3, "#333");
+      World.add(engine.world, obj);
+    }
+  }
+}
+
 
 const size = 3;
 const train = new Train(100, 700, size);
@@ -154,6 +175,8 @@ World.add(engine.world, train.composite);
 
 const hero = new Hero(400, 750);
 World.add(engine.world, hero.body);
+
+const source = new OreSource(200, 400, {freq: 700, size});
 
 const key = {};
 document.addEventListener("keydown", e => key[e.code] = true);
@@ -163,11 +186,7 @@ document.addEventListener("mousedown", e => key.MouseBtn = {x: e.x, y: e.y});
 Events.on(engine, "beforeTick", e => {
   train.tick(e, key);
   hero.tick(e, key);
-  if(key.MouseBtn) {
-    const {x, y} = key.MouseBtn;
-    key.MouseBtn = null;
-    World.add(engine.world, Bodies.polygon(x, y, 7, size*3));
-  }
+  source.tick(e, key);
 });
 
 
