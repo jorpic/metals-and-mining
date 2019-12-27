@@ -6,6 +6,7 @@ import {
   Body, Bodies, Constraint, Composite,
   Vertices
 } from "matter-js";
+import heroImg from "./hero.png";
 
 
 const width = window.innerWidth * 0.98;
@@ -24,7 +25,7 @@ const render = Render.create({
 
 
 class Car {
-  constructor(x, y, size=10) {
+  constructor(x, y, size) {
     this.composite = Composite.create({label: "oreCar"});
     this.body = this.__addParts(this.composite, x, y, size);
   }
@@ -37,7 +38,6 @@ class Car {
   position() {
     return this.body.position;
   }
-
 
   __addParts(composite, x, y, size) {
     const group = Body.nextGroup(true);
@@ -78,7 +78,7 @@ class Car {
 
 
 class Train {
-  constructor(x, y, size=10) {
+  constructor(x, y, size) {
     this.length = 1;
     this.size = size;
     this.composite = Composite.create({label: "oreTrain"});
@@ -104,11 +104,46 @@ class Train {
     this.length += 1;
   }
 
-  move(x=0, y=0) {
-    const {body} = this.head;
-    Body.applyForce(body, body.position, {
+  move(x, y = 0) {
+    Body.applyForce(this.body, this.body.position, {
       x: 0.0001 * x * this.length * this.size,
       y});
+  }
+
+  tick(e, key) {
+    if(key.ArrowUp) { this.addCar(); key.ArrowUp = false; }
+    if(key.ArrowLeft) this.move(-1);
+    if(key.ArrowRight) this.move(1);
+  }
+}
+
+
+class Hero {
+  constructor(x, y) {
+    console.log(heroImg);
+    const heroW = 206, heroH = 287, heroScale = 0.2;
+    this.body = Bodies.rectangle(
+      x, y, heroW*heroScale, heroH*heroScale,
+      { frictionAir: 0.2,
+        render: {
+          sprite: {
+            texture: heroImg,
+            xScale: heroScale,
+            yScale: heroScale,
+          }}
+      });
+  }
+
+  move(x, y = 0) {
+    Body.applyForce(this.body, this.body.position, {x: 0.002*x, y: 0.005*y});
+  }
+
+  tick(e, key) {
+    Body.setAngle(this.body, 0);
+    if(key.KeyA) this.move(-1);
+    if(key.KeyD) this.move(1);
+    // FIXME: if touches ground
+    if(key.KeyW) { this.move(0, -1); key.KeyW = false; }
   }
 }
 
@@ -117,22 +152,24 @@ const size = 3;
 const train = new Train(100, 700, size);
 World.add(engine.world, train.composite);
 
+const hero = new Hero(400, 750);
+World.add(engine.world, hero.body);
+
 const key = {};
 document.addEventListener("keydown", e => key[e.code] = true);
 document.addEventListener("keyup", e => key[e.code] = false);
 document.addEventListener("mousedown", e => key.MouseBtn = {x: e.x, y: e.y});
 
 Events.on(engine, "beforeTick", e => {
-  Body.setAngle(hero, 0);
-  if(key.ArrowUp) { train.addCar(); key.ArrowUp = false; }
-  if(key.ArrowLeft) train.move(-1);
-  if(key.ArrowRight) train.move(1);
+  train.tick(e, key);
+  hero.tick(e, key);
   if(key.MouseBtn) {
     const {x, y} = key.MouseBtn;
     key.MouseBtn = null;
     World.add(engine.world, Bodies.polygon(x, y, 7, size*3));
   }
 });
+
 
 const ground = Bodies.rectangle(
   width/2, height*0.95, width, 30,
