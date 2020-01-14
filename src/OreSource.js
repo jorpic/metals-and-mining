@@ -4,14 +4,14 @@ import {
 
 
 export class OreSource {
-  constructor(engine, x, y, {freq, size}) {
-    Object.assign(this, {x, y, freq, size});
+  constructor(engine, x, y, {delay, size}) {
+    Object.assign(this, {x, y, delay, size});
     this.lastCreation = 0;
     this.engine = engine;
   }
 
   tick(e, key) {
-    if(e.timestamp - this.lastCreation > this.freq) {
+    if(e.timestamp - this.lastCreation > this.delay) {
       this.lastCreation = e.timestamp;
       const poly = (sz, color) => Bodies.polygon(
         this.x, this.y, 7, sz, {render: {fillStyle: color}});

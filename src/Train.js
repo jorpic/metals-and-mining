@@ -11,7 +11,6 @@ class Car {
     this.body = this.__addParts(this.composite, x, y, size);
   }
 
-
   width() {
     return this.body.bounds.max.x - this.body.bounds.min.x;
   }
