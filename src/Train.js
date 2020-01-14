@@ -70,7 +70,7 @@ class Train {
   addCar() {
     const width = this.head.width();
     const {x, y} = this.head.position();
-    const carB = new Car(x + width, y, this.size);
+    const carB = new Car(x - width, y, this.size);
     Composite.add(this.composite, [
       carB.composite,
       Constraint.create({
