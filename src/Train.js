@@ -85,6 +85,8 @@ class Train {
     this.length += 1;
   }
 
+  width() { return this.length * this.head.width(); }
+
   move(x, y = 0) {
     Body.applyForce(this.head.body, this.head.position(), {
       x: 0.0001 * x * this.length * this.size,

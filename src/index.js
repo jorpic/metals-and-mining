@@ -42,7 +42,7 @@ ground(0, height*0.6, width-ELEVATOR_WIDTH, -0.01);
 
 const size = 3;
 const train = new Train(engine, 1700, height*0.18, size);
-const oreSource = new OreSource(engine, 100, height*0.45, {delay: 900, size});
+const oreSource = new OreSource({engine, x: 100, y: height*0.45, delay: 900, size});
 const objects = [
   train,
 //  new Hero(engine, 400, height*0.2),
@@ -59,6 +59,7 @@ Events.on(engine, "beforeTick", e => {
   objects.forEach(o => o.tick(e, key))
   const {x, y} = train.head.position();
   oreSource.enabled = x < 100 && y > height/2;
+  oreSource.width = train.width();
 });
 
 Engine.run(engine);
