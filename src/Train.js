@@ -6,9 +6,9 @@ import {
 
 
 class Car {
-  constructor(x, y, size) {
+  constructor(x, y) {
     this.composite = Composite.create({label: "oreCar"});
-    this.body = this.__addParts(this.composite, x, y, size);
+    this.body = this.__addParts(this.composite, x, y);
   }
 
   width() {
@@ -19,27 +19,25 @@ class Car {
     return this.body.position;
   }
 
-  __addParts(composite, x, y, size) {
+  __addParts(composite, x, y) {
     const group = Body.nextGroup(true);
     const opt = {
       collisionFilter: {group},
-      chamfer: {radius: size},
+      // chamfer: {radius: size},
       render: {fillStyle: "#222"}
     };
 
     const vertices = Vertices.fromPath([
-      `M 0 0 L ${size*2} 0`,
-      `L ${size*6}  ${size*10} L ${size*20} ${size*10}`,
-      `L ${size*23} 0          L ${size*25} 0`,
-      `L ${size*21} ${size*12} L ${size*5}  ${size*12} Z`
+      "M 0 0 L 6 0 L 18  30 L 60 30",
+      "L 69 0 L 75 0 L 63 36 L 15 36 Z"
     ].join(" "));
     const body = Bodies.fromVertices(x, y, vertices, opt);
     Composite.addBody(composite, body);
 
     for (let k of [1, -1]) {
-      const dx = k*size*5;
-      const dy = size*4;
-      const wheel = Bodies.circle(x + dx, y + dy, size*3, opt);
+      const dx = k*15;
+      const dy = 12;
+      const wheel = Bodies.circle(x + dx, y + dy, 9, opt);
       Composite.addBody(composite, wheel);
       Composite.addConstraint(
         composite,
@@ -58,11 +56,10 @@ class Car {
 
 
 class Train {
-  constructor(engine, x, y, size) {
+  constructor(engine, x, y) {
     this.length = 1;
-    this.size = size;
     this.composite = Composite.create({label: "oreTrain"});
-    this.head = new Car(x, y, size);
+    this.head = new Car(x, y);
     Composite.add(this.composite, this.head.composite);
     World.add(engine.world, this.composite);
   }
@@ -70,7 +67,7 @@ class Train {
   addCar() {
     const width = this.head.width();
     const {x, y} = this.head.position();
-    const carB = new Car(x - width, y, this.size);
+    const carB = new Car(x - width, y);
     Composite.add(this.composite, [
       carB.composite,
       Constraint.create({
@@ -87,11 +84,7 @@ class Train {
 
   width() { return this.length * this.head.width(); }
 
-  move(x, y = 0) {
-    Body.applyForce(this.head.body, this.head.position(), {
-      x: 0.0001 * x * this.length * this.size,
-      y});
-  }
+  move(dir) { Body.setVelocity( this.head.body, {x: 1.5*dir, y: 0}); }
 
   tick(e, key) {
     if(key.ArrowUp) { this.addCar(); key.ArrowUp = false; }

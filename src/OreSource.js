@@ -4,7 +4,7 @@ import {
 
 
 export class OreSource {
-  constructor(args = {engine, x, y, delay, size}) {
+  constructor(args = {engine, x, y, delay}) {
     Object.assign(this, args);
     this.lastCreation = 0;
     this.enabled = false;
@@ -16,10 +16,12 @@ export class OreSource {
       this.lastCreation = e.timestamp;
       const poly = (sz, color) => Bodies.polygon(
         this.x + this.width*(Math.random() - 0.5),
-        this.y, 7, sz, {render: {fillStyle: color}});
+        this.y,
+        Math.round(5 + 4*Math.random()),
+        sz, {render: {fillStyle: color}});
       const obj = Math.random() > 0.8
-        ? poly(this.size*2, "#ffb612")
-        : poly(this.size*3, "#333");
+        ? poly(5, "#ffb612")
+        : poly(7, "#333");
       World.add(this.engine.world, obj);
     }
   }

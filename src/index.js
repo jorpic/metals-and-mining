@@ -13,12 +13,13 @@ import OreSource from "./OreSource";
 import Elevator from "./Elevator";
 
 
-const width = window.innerWidth * 0.98;
-const height = window.innerHeight * 0.98;
+const width = 1000;
+const height = 600;
+const element = document.getElementById("matter");
+element.focus();
 const engine = Engine.create();
 const render = Render.create({
-  element: document.body,
-  engine: engine,
+  element, engine,
   options: {
     width, height,
     wireframes: false,
@@ -29,7 +30,7 @@ const render = Render.create({
 
 const ELEVATOR_WIDTH = 300;
 function ground(x, y, w, angle) {
-  const rect = Bodies.rectangle(x + w/2, y, w, 30, {isStatic: true});
+  const rect = Bodies.rectangle(x + w/2, y, w, 20, {isStatic: true});
   Body.rotate(rect, Math.PI*angle);
   World.add(engine.world, rect);
 }
@@ -39,10 +40,10 @@ World.add(engine.world, Bodies.rectangle(width+10, height/2, 20, height, {isStat
 ground(+ELEVATOR_WIDTH, height*0.2, width-ELEVATOR_WIDTH, +0.01);
 ground(+ELEVATOR_WIDTH, height*0.4, width-2*ELEVATOR_WIDTH, 0.00);
 ground(0, height*0.6, width-ELEVATOR_WIDTH, -0.01);
+ground(0, height, width, -0.0);
 
-const size = 3;
-const train = new Train(engine, 1700, height*0.18, size);
-const oreSource = new OreSource({engine, x: 100, y: height*0.45, delay: 900, size});
+const train = new Train(engine, 100, height*0.18);
+const oreSource = new OreSource({engine, x: 100, y: height*0.45, delay: 900});
 const objects = [
   train,
 //  new Hero(engine, 400, height*0.2),

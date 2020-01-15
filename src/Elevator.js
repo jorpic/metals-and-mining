@@ -9,15 +9,15 @@ export class Elevator {
 
     const walls = Composite.create({label: "elevator"});
     Composite.add(walls, [
-      Bodies.rectangle(x, y+30, 30, 30, {isStatic: true}),
-      Bodies.rectangle(x, y-height, 30, 30, {isStatic: true}),
+      Bodies.rectangle(x, y+20, 20, 20, {isStatic: true}),
+      Bodies.rectangle(x, y-height, 20, 20, {isStatic: true}),
     ]);
     World.add(engine.world, walls);
 
     const opt = {
       render: {fillStyle: "#444"}
     };
-    this.body = Bodies.rectangle(x, y, width, 30, opt);
+    this.body = Bodies.rectangle(x, y, width, 20, opt);
     World.add(engine.world, this.body);
   }
 
